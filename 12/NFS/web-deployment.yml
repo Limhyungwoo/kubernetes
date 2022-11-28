@@ -1,0 +1,40 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: web-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      web: nginx
+  template:
+    metadata:
+      labels:
+        web: nginx
+    spec:
+      containers:
+      - image: nginx:1.14
+        name: web-container
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name:  html
+          mountPath:  /usr/share/nginx/html
+      volumes:
+      - name: html
+        nfs:
+          server: 192.168.10.100
+          path: /nas/k8s
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-svc
+spec:
+  type: NodePort
+  selector:
+    web: nginx
+  ports:
+  - port:  80
+    targetPort: 80
+    nodePort: 30000

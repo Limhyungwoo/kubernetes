@@ -1,0 +1,22 @@
+# kubectl create cronjob cj --schedule="* * * * *" \
+# --restart=Never --image=busybox -- /bin/sh -c "date; sleep 30; date"
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob-exam
+spec:
+  schedule: "* * * * *"
+  startingDeadlineSeconds: 500
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronjob-container-exam
+            image: busybox
+            args:
+            - "/bin/sh"
+            - "-c"
+            - "echo 'START'; sleep 10; echo 'END'"
+          restartPolicy: Never
